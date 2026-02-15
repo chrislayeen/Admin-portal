@@ -72,7 +72,7 @@ const QuickPhotoModal = ({ photo, session, onClose }) => {
                             fontStyle: 'italic',
                             lineHeight: '1.5'
                         }}>
-                            <span style={{ color: 'white', fontWeight: 800, fontSize: '0.7rem', textTransform: 'uppercase', display: 'block', marginBottom: '4px', fontStyle: 'normal', opacity: 0.9 }}>Auditor Remarks</span>
+                            <span style={{ color: 'white', fontWeight: 800, fontSize: '0.7rem', textTransform: 'uppercase', display: 'block', marginBottom: '4px', fontStyle: 'normal' }}>Auditor Remarks</span>
                             "{session.comments}"
                         </div>
                     )}
