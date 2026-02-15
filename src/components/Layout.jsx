@@ -86,12 +86,13 @@ const Layout = ({ children }) => {
                     </div>
                 </nav>
 
-                <div style={{ padding: '20px', borderTop: '1px solid var(--slate-800)' }}>
+                <div style={{ padding: '20px', borderTop: '1px solid var(--slate-800)', display: 'flex', justifyContent: 'center' }}>
                     <button
                         onClick={handleLogout}
                         style={{
-                            width: '100%',
-                            padding: '10px',
+                            width: '40px',
+                            height: '40px',
+                            padding: '0',
                             background: 'rgba(255,255,255,0.05)',
                             color: 'white',
                             border: '1px solid var(--slate-700)',
@@ -99,14 +100,12 @@ const Layout = ({ children }) => {
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
-                            gap: '8px',
-                            fontWeight: 600,
-                            fontSize: '0.85rem',
                             cursor: 'pointer',
                             transition: 'all 0.15s ease'
                         }}
+                        title="Sign Out"
                     >
-                        <LogOut size={16} /> Sign Out
+                        <LogOut size={18} />
                     </button>
                 </div>
             </aside>
