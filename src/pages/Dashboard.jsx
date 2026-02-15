@@ -59,8 +59,23 @@ const QuickPhotoModal = ({ photo, session, onClose }) => {
                         <X size={18} />
                     </button>
                 </div>
-                <div style={{ background: 'var(--slate-900)', display: 'flex', justifyContent: 'center' }}>
-                    <img src={url} style={{ maxWidth: '100%', maxHeight: '60vh', display: 'block', objectFit: 'contain' }} alt="Preview" />
+                <div style={{ background: 'var(--slate-900)', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                    <img src={url} style={{ maxWidth: '100%', maxHeight: '55vh', display: 'block', objectFit: 'contain' }} alt="Preview" />
+                    {session.comments && (
+                        <div style={{
+                            width: '100%',
+                            padding: '16px 24px',
+                            background: 'rgba(255,255,255,0.05)',
+                            borderTop: '1px solid rgba(255,255,255,0.1)',
+                            color: 'rgba(255,255,255,0.9)',
+                            fontSize: '0.9rem',
+                            fontStyle: 'italic',
+                            lineHeight: '1.5'
+                        }}>
+                            <span style={{ color: 'var(--primary)', fontWeight: 800, fontSize: '0.7rem', textTransform: 'uppercase', display: 'block', marginBottom: '4px', fontStyle: 'normal' }}>Auditor Remarks</span>
+                            "{session.comments}"
+                        </div>
+                    )}
                 </div>
                 <div style={{ padding: '20px 24px', display: 'flex', justifyContent: 'flex-end', gap: '12px' }}>
                     <button onClick={() => window.open(url, '_blank')} style={{ height: '40px', padding: '0 16px', background: 'var(--slate-100)', color: 'var(--slate-700)', border: 'none', borderRadius: '10px', fontWeight: 600, fontSize: '0.85rem' }}>
@@ -131,17 +146,39 @@ const ActivityFeedItem = ({ session, delay, onPhotoClick }) => (
             )}
         </div>
         <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={{ fontSize: '0.9rem', fontWeight: 700, color: 'var(--slate-900)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                Chassis #{session.chassis_id}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                <div>
+                    <div style={{ fontSize: '0.9rem', fontWeight: 700, color: 'var(--slate-900)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                        Chassis #{session.chassis_id}
+                    </div>
+                    <div style={{ fontSize: '0.75rem', color: 'var(--slate-500)', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                        <span style={{ fontWeight: 600 }}>{session.driver_name}</span>
+                        <span>•</span>
+                        <span>{format(new Date(session.end_time), 'HH:mm')}</span>
+                    </div>
+                </div>
+                <div style={{ color: 'var(--slate-300)' }}>
+                    <MapPin size={14} />
+                </div>
             </div>
-            <div style={{ fontSize: '0.75rem', color: 'var(--slate-500)', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <span style={{ fontWeight: 600 }}>{session.driver_name}</span>
-                <span>•</span>
-                <span>{format(new Date(session.end_time), 'HH:mm')}</span>
-            </div>
-        </div>
-        <div style={{ color: 'var(--slate-300)' }}>
-            <MapPin size={16} />
+            {session.comments && (
+                <div style={{
+                    marginTop: '8px',
+                    fontSize: '0.8rem',
+                    color: 'var(--slate-600)',
+                    background: 'var(--slate-50)',
+                    padding: '8px 12px',
+                    borderRadius: '8px',
+                    borderLeft: '2px solid var(--primary)',
+                    display: '-webkit-box',
+                    WebkitLineClamp: 2,
+                    WebkitBoxOrient: 'vertical',
+                    overflow: 'hidden',
+                    lineHeight: '1.4'
+                }}>
+                    {session.comments}
+                </div>
+            )}
         </div>
     </motion.div>
 );
