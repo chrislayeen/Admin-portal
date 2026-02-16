@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { format, subDays, startOfMonth, endOfMonth, eachDayOfInterval } from 'date-fns';
 import { motion } from 'framer-motion';
+import { downloadCSV } from '../utils/export';
 
 const AnalyticsCard = ({ title, children, icon: Icon }) => (
     <div className="card" style={{ padding: '24px' }}>
@@ -67,10 +68,16 @@ const Analytics = () => {
                     <h1 style={{ fontSize: '1.75rem', fontWeight: 800, color: 'var(--slate-900)', letterSpacing: '-0.025em' }}>Performance Intelligence</h1>
                     <p style={{ color: 'var(--slate-500)', fontWeight: 500, fontSize: '0.9rem' }}>Real-time telemetry and throughput analysis for trailer assembly.</p>
                 </div>
-                <button style={{ height: '44px', padding: '0 20px', background: 'var(--slate-900)', color: 'white', borderRadius: '10px', border: 'none', fontWeight: 700, fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
+                <button
+                    onClick={async () => {
+                        const { data } = await supabase.from('sessions').select('*').order('end_time', { ascending: false });
+                        if (data) downloadCSV(data, 'analytics-dump');
+                    }}
+                    style={{ height: '44px', padding: '0 20px', background: 'var(--slate-900)', color: 'white', borderRadius: '10px', border: 'none', fontWeight: 700, fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}
+                >
                     <Download size={18} /> Export CSV
                 </button>
-            </header>
+            </header >
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '24px', marginBottom: '32px' }}>
                 <div style={{ background: 'var(--primary)', color: 'white', padding: '24px', borderRadius: '16px', boxShadow: 'var(--shadow-md)' }}>
@@ -132,7 +139,7 @@ const Analytics = () => {
                     </div>
                 </AnalyticsCard>
             </div>
-        </div>
+        </div >
     );
 };
 

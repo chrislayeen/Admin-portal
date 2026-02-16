@@ -23,6 +23,7 @@ import {
 import { format } from 'date-fns';
 import { toast } from 'sonner';
 import { motion, AnimatePresence } from 'framer-motion';
+import { downloadCSV } from '../utils/export';
 
 const RecordDetailModal = ({ session, onClose }) => {
     if (!session) return null;
@@ -131,7 +132,10 @@ const RecordDetailModal = ({ session, onClose }) => {
                             <button style={{ width: '100%', height: '44px', background: 'var(--primary)', color: 'white', border: 'none', borderRadius: '10px', fontWeight: 700, cursor: 'pointer', marginBottom: '12px' }}>
                                 APPROVE SUBMISSION
                             </button>
-                            <button style={{ width: '100%', height: '44px', border: '1px solid var(--slate-200)', background: 'white', color: 'var(--slate-600)', borderRadius: '10px', fontWeight: 700, cursor: 'pointer' }}>
+                            <button
+                                onClick={() => downloadCSV([session], `record-${session.chassis_id}`)}
+                                style={{ width: '100%', height: '44px', border: '1px solid var(--slate-200)', background: 'white', color: 'var(--slate-600)', borderRadius: '10px', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                            >
                                 <Download size={16} style={{ marginRight: '8px' }} /> EXPORT BUNDLE
                             </button>
                         </div>
@@ -259,7 +263,15 @@ const Records = () => {
                         <div style={{ fontWeight: 800, fontSize: '0.9rem' }}>{selectedIds.length} RECORDS SELECTED</div>
                         <div style={{ flex: 1, display: 'flex', gap: '12px' }}>
                             <button onClick={handleBulkArchive} style={{ background: 'var(--primary)', color: 'white', border: 'none', padding: '8px 16px', borderRadius: '8px', fontWeight: 700, cursor: 'pointer' }}>Approve Batch</button>
-                            <button style={{ background: 'rgba(255,255,255,0.1)', color: 'white', border: 'none', padding: '8px 16px', borderRadius: '8px', fontWeight: 700, cursor: 'pointer' }}>Export CSV</button>
+                            <button
+                                onClick={async () => {
+                                    const { data } = await supabase.from('sessions').select('*').in('id', selectedIds);
+                                    if (data) downloadCSV(data, 'bulk-export');
+                                }}
+                                style={{ background: 'rgba(255,255,255,0.1)', color: 'white', border: 'none', padding: '8px 16px', borderRadius: '8px', fontWeight: 700, cursor: 'pointer' }}
+                            >
+                                Export CSV
+                            </button>
                         </div>
                         <button onClick={() => setSelectedIds([])} style={{ color: '#94a3b8', background: 'none', border: 'none', fontWeight: 700, cursor: 'pointer' }}>Deselect All</button>
                     </motion.div>

@@ -18,6 +18,60 @@ import {
 import { toast } from 'sonner';
 import { motion, AnimatePresence } from 'framer-motion';
 
+const PinModal = ({ isOpen, onClose, onSave }) => {
+    const [pin, setPin] = useState('');
+    const [loading, setLoading] = useState(false);
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setLoading(true);
+        await onSave(pin);
+        setLoading(false);
+        setPin('');
+        onClose();
+    };
+
+    if (!isOpen) return null;
+
+    return (
+        <motion.div
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            className="modal-backdrop"
+            style={{ position: 'fixed', inset: 0, zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '32px' }}
+        >
+            <motion.div
+                initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }}
+                style={{ background: 'white', borderRadius: '16px', overflow: 'hidden', position: 'relative', maxWidth: '400px', width: '100%', boxShadow: 'var(--shadow-md)' }}
+            >
+                <div style={{ padding: '20px 24px', borderBottom: '1px solid var(--slate-200)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: 'var(--slate-900)' }}>Update Drivers App PIN</h3>
+                    <button onClick={onClose} style={{ background: 'var(--slate-100)', border: 'none', width: '32px', height: '32px', borderRadius: '8px', cursor: 'pointer' }}><X size={18} /></button>
+                </div>
+                <form onSubmit={handleSubmit} style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                    <div>
+                        <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, color: 'var(--slate-500)', marginBottom: '8px', textTransform: 'uppercase' }}>New Security PIN</label>
+                        <input
+                            type="text"
+                            value={pin}
+                            onChange={(e) => setPin(e.target.value)}
+                            required
+                            maxLength={6}
+                            placeholder="e.g. 836548"
+                            style={{ width: '100%', height: '44px', padding: '0 12px', borderRadius: '10px', border: '1px solid var(--slate-200)', background: 'var(--slate-50)', outline: 'none' }}
+                        />
+                        <p style={{ marginTop: '8px', fontSize: '0.7rem', color: 'var(--slate-400)' }}>This will update the login PIN for ALL driver-role accounts.</p>
+                    </div>
+                    <div style={{ marginTop: '12px' }}>
+                        <button type="submit" disabled={loading} style={{ width: '100%', height: '44px', background: 'var(--primary)', color: 'white', border: 'none', borderRadius: '10px', fontWeight: 700, cursor: 'pointer' }}>
+                            {loading ? <Loader2 className="animate-spin" size={18} /> : 'Update PIN'}
+                        </button>
+                    </div>
+                </form>
+            </motion.div>
+        </motion.div>
+    );
+};
+
 const DriverModal = ({ isOpen, onClose, onSave, driver = null }) => {
     const [name, setName] = useState('');
     const [pin, setPin] = useState('');
@@ -83,6 +137,7 @@ const Settings = () => {
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState('');
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isPinModalOpen, setIsPinModalOpen] = useState(false);
     const [editingDriver, setEditingDriver] = useState(null);
 
     const fetchDrivers = async () => {
@@ -137,6 +192,35 @@ const Settings = () => {
     const filteredDrivers = drivers.filter(d =>
         d.name.toLowerCase().includes(search.toLowerCase()) && d.role !== 'admin'
     );
+
+    const handleUpdateDriverPin = async (newPin) => {
+        try {
+            const { error } = await supabase
+                .from('users')
+                .update({ pin: newPin })
+                .eq('role', 'driver');
+            if (error) throw error;
+            toast.success('Drivers App PIN updated successfully');
+            fetchDrivers();
+        } catch (err) {
+            toast.error(err.message);
+        }
+    };
+
+    const handlePurgeLogs = async () => {
+        if (!confirm('Are you ABSOLUTELY sure? This will delete ALL session records older than 30 days.')) return;
+        try {
+            const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
+            const { error } = await supabase
+                .from('sessions')
+                .delete()
+                .lt('created_at', thirtyDaysAgo);
+            if (error) throw error;
+            toast.success('Cleanup complete. Old records purged.');
+        } catch (err) {
+            toast.error(err.message);
+        }
+    };
 
     return (
         <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
@@ -234,15 +318,21 @@ const Settings = () => {
                                 <Lock size={12} /> SUPREME CONTROL
                             </div>
                         </div>
-                        <button style={{ width: '100%', padding: '12px', background: '#0f172a', color: 'white', border: 'none', borderRadius: '12px', fontWeight: 700, fontSize: '0.85rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', cursor: 'pointer' }}>
-                            <Key size={16} /> Change Admin PIN
+                        <button
+                            onClick={() => setIsPinModalOpen(true)}
+                            style={{ width: '100%', padding: '12px', background: '#0f172a', color: 'white', border: 'none', borderRadius: '12px', fontWeight: 700, fontSize: '0.85rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', cursor: 'pointer' }}
+                        >
+                            <Key size={16} /> Change Drivers App PIN
                         </button>
                     </div>
 
                     <div style={{ background: '#fee2e2', padding: '1.5rem', borderRadius: '24px', border: '1px solid #fecaca' }}>
                         <h3 style={{ fontSize: '0.9rem', fontWeight: 800, color: '#b91c1c', marginBottom: '0.5rem' }}>Danger Zone</h3>
                         <p style={{ fontSize: '0.75rem', color: '#991b1b', marginBottom: '1rem' }}>Sensitive system-wide actions. Procedures cannot be reversed.</p>
-                        <button style={{ width: '100%', padding: '10px', background: 'white', border: '1px solid #fecaca', borderRadius: '10px', color: '#b91c1c', fontWeight: 700, fontSize: '0.8rem', cursor: 'pointer' }}>
+                        <button
+                            onClick={handlePurgeLogs}
+                            style={{ width: '100%', padding: '10px', background: 'white', border: '1px solid #fecaca', borderRadius: '10px', color: '#b91c1c', fontWeight: 700, fontSize: '0.8rem', cursor: 'pointer' }}
+                        >
                             Purge Old Logs
                         </button>
                     </div>
@@ -254,6 +344,11 @@ const Settings = () => {
                 onClose={() => setIsModalOpen(false)}
                 onSave={handleSaveDriver}
                 driver={editingDriver}
+            />
+            <PinModal
+                isOpen={isPinModalOpen}
+                onClose={() => setIsPinModalOpen(false)}
+                onSave={handleUpdateDriverPin}
             />
         </div>
     );

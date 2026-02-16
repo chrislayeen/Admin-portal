@@ -127,11 +127,8 @@ const Layout = ({ children }) => {
                     marginBottom: '12px'
                 }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-                        {/* Search Mockup */}
-                        <div style={{ background: 'white', padding: '10px 20px', borderRadius: 'var(--radius-pill)', display: 'flex', alignItems: 'center', gap: '10px', boxShadow: 'var(--shadow-sm)', color: 'var(--slate-400)', width: '300px' }}>
-                            <div style={{ width: '16px', height: '16px', border: '2px solid currentColor', borderRadius: '50%' }} />
-                            <span style={{ fontSize: '0.85rem' }}>Search transactions...</span>
-                        </div>
+                        {/* Search Mockup Removed */}
+                        <div />
 
                         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                             <div style={{ textAlign: 'right' }}>
