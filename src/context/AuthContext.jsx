@@ -33,14 +33,18 @@ export const AuthProvider = ({ children }) => {
                 .maybeSingle();
 
             if (error) throw new Error(`Database error: ${error.message}`);
+            if (!data) throw new Error('Invalid credentials or unauthorized access');
 
-            if (!data) {
-                throw new Error('Invalid credentials or unauthorized access');
-            }
+            // Map the RPC response aliases back to our internal structure
+            const adminData = {
+                id: data.user_id,
+                name: data.user_name,
+                role: data.user_role
+            };
 
-            setAdmin(data);
-            localStorage.setItem('admin_session', JSON.stringify(data));
-            return data;
+            setAdmin(adminData);
+            localStorage.setItem('admin_session', JSON.stringify(adminData));
+            return adminData;
         } catch (err) {
             console.error('Audit Conclusion: Login failed.', err.message);
             throw err;
