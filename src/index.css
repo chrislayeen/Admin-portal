@@ -1,12 +1,24 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+@import url('https://api.fontshare.com/v2/css?f[]=satoshi@900,700,500,300,400&display=swap');
 
 :root {
   /* Colors */
-  --primary: #1d4ed8;
+  --primary: #2563eb;
+  /* Softer blue */
   --primary-dark: #1e40af;
   --success: #10b981;
+  --success-bg: #ecfdf5;
+  /* Light green background */
   --error: #ef4444;
+  --error-bg: #fef2f2;
   --warning: #f59e0b;
+  --warning-bg: #fffbeb;
+
+  --sidebar-bg: #0F172A;
+  /* Deep Navy */
+  --sidebar-text: #94a3b8;
+  --sidebar-active: #ffffff;
+  --bg-body: #EFF6FF;
+  /* Very light cool blue */
 
   --slate-50: #f8fafc;
   --slate-100: #f1f5f9;
@@ -20,34 +32,26 @@
   --slate-900: #0f172a;
   --slate-950: #020617;
 
-  /* Spacing (4px base) */
+  /* Spacing */
   --space-1: 4px;
   --space-2: 8px;
   --space-3: 12px;
   --space-4: 16px;
-  --space-5: 24px;
-  --space-6: 32px;
-  --space-8: 48px;
-  --space-10: 64px;
+  --space-6: 24px;
+  --space-8: 32px;
 
-  /* Typography */
-  --text-xs: 0.75rem;
-  --text-sm: 0.875rem;
-  --text-base: 1rem;
-  --text-lg: 1.125rem;
-  --text-xl: 1.25rem;
-  --text-2xl: 1.5rem;
-  --text-3xl: 1.875rem;
-
-  /* Radius */
+  /* Radius (Pocket Style = Rounded) */
   --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 14px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  --radius-xl: 32px;
   --radius-pill: 9999px;
 
-  /* Shadows */
-  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  /* Shadows (Soft & Diffused) */
+  --shadow-sm: 0 2px 8px -2px rgba(23, 37, 84, 0.05);
+  /* Blue-tinted shadow */
+  --shadow-md: 0 10px 30px -5px rgba(23, 37, 84, 0.08);
+  --shadow-float: 0 20px 40px -10px rgba(23, 37, 84, 0.12);
 }
 
 * {
@@ -57,8 +61,8 @@
 }
 
 body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  background-color: var(--slate-50);
+  font-family: 'Satoshi', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background-color: var(--bg-body);
   color: var(--slate-900);
   -webkit-font-smoothing: antialiased;
 }
@@ -103,8 +107,14 @@ button:disabled {
 .card {
   background: white;
   border-radius: var(--radius-lg);
-  border: 1px solid var(--slate-200);
+  border: none;
   box-shadow: var(--shadow-sm);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
 }
 
 .table-header {

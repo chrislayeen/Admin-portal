@@ -340,7 +340,7 @@ const Records = () => {
             ) : (
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1.5rem' }}>
                     {sessions.map(session => (
-                        <div key={session.id} style={{ background: 'white', borderRadius: '24px', overflow: 'hidden', border: '1px solid #f1f5f9', boxShadow: '0 4px 12px rgba(0,0,0,0.03)' }}>
+                        <div key={session.id} className="card" style={{ overflow: 'hidden', padding: 0 }}>
                             <div style={{ height: '180px', position: 'relative' }}>
                                 <img
                                     src={session.photos?.[0] ? supabase.storage.from('photos').getPublicUrl(session.photos[0].storage_path).data.publicUrl : ''}

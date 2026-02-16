@@ -90,22 +90,48 @@ const QuickPhotoModal = ({ photo, session, onClose }) => {
     );
 };
 
-const StatCard = ({ title, value, icon, color, trend, delay = 0 }) => (
+const StatCard = ({ title, value, icon, color, trend, delay = 0, feature = false }) => (
     <motion.div
         initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay }}
         className="card"
-        style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '8px' }}
+        style={{
+            padding: '24px',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '12px',
+            background: feature ? 'var(--slate-900)' : 'white',
+            color: feature ? 'white' : 'var(--slate-900)',
+            position: 'relative',
+            overflow: 'hidden'
+        }}
     >
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <div style={{ color: 'var(--slate-400)' }}>{icon}</div>
+        {feature && (
+            <div style={{ position: 'absolute', top: '-20px', right: '-20px', width: '100px', height: '100px', background: 'rgba(255,255,255,0.05)', borderRadius: '50%' }} />
+        )}
+
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', zIndex: 1 }}>
+            <div style={{
+                color: feature ? 'white' : 'var(--primary)',
+                background: feature ? 'rgba(255,255,255,0.1)' : 'var(--bg-body)',
+                width: '40px', height: '40px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center'
+            }}>
+                {icon}
+            </div>
             {trend && (
-                <div style={{ color: 'var(--success)', fontSize: '0.75rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '4px' }}>
-                    <TrendingUp size={14} /> {trend}
+                <div style={{
+                    color: feature ? 'var(--success)' : 'var(--success)',
+                    background: feature ? 'rgba(16, 185, 129, 0.1)' : 'rgba(16, 185, 129, 0.1)',
+                    padding: '4px 8px', borderRadius: 'var(--radius-pill)',
+                    fontSize: '0.75rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '4px'
+                }}>
+                    <TrendingUp size={12} /> {trend}
                 </div>
             )}
         </div>
-        <div style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--slate-500)', textTransform: 'uppercase', letterSpacing: '0.025em' }}>{title}</div>
-        <div style={{ fontSize: '1.75rem', fontWeight: 800, color: 'var(--slate-900)', letterSpacing: '-0.025em' }}>{value}</div>
+        <div style={{ zIndex: 1 }}>
+            <div style={{ fontSize: '2rem', fontWeight: 800, letterSpacing: '-0.03em', marginBottom: '4px' }}>{value}</div>
+            <div style={{ fontSize: '0.85rem', fontWeight: 500, opacity: feature ? 0.7 : 0.5 }}>{title}</div>
+        </div>
     </motion.div>
 );
 
@@ -274,11 +300,11 @@ const Dashboard = () => {
             </div>
 
             {/* Stats Grid */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1.5rem', marginBottom: '3rem' }}>
-                <StatCard title="Total Collected" value={stats.total} icon={<BarChart3 size={24} />} trend="+12%" delay={0.1} />
-                <StatCard title="Today's Sessions" value={stats.today} icon={<CheckCircle size={24} />} trend={`+${stats.today}`} delay={0.2} />
-                <StatCard title="Registered Drivers" value={stats.users} icon={<Users size={24} />} delay={0.3} />
-                <StatCard title="Currently Active" value={stats.activeNow} icon={<Activity size={24} />} delay={0.4} />
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '24px', marginBottom: '3rem' }}>
+                <StatCard title="Active Sessions" value={stats.activeNow} icon={<Activity size={20} />} feature={true} delay={0.1} />
+                <StatCard title="Total Collected" value={stats.total} icon={<BarChart3 size={20} />} trend="+12%" delay={0.2} />
+                <StatCard title="Today's Volume" value={stats.today} icon={<CheckCircle size={20} />} trend={`+${stats.today}`} delay={0.3} />
+                <StatCard title="Driver Team" value={stats.users} icon={<Users size={20} />} delay={0.4} />
             </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1.8fr) 1fr', gap: '32px' }}>
