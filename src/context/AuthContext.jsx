@@ -23,27 +23,13 @@ export const AuthProvider = ({ children }) => {
             console.log('--- ADMIN LOGIN AUDIT ---');
             console.log('Payload:', { name, pin });
 
-            // Requirement: Admin name can be anything, but PIN must be 884876
-            if (pin === '884876') {
-                const adminData = {
-                    name: name || 'System Admin',
-                    role: 'admin',
-                    id: 'internal-' + Date.now()
-                };
-
-                console.log('Audit Result: ACCESS GRANTED (Override PIN)');
-                setAdmin(adminData);
-                localStorage.setItem('admin_session', JSON.stringify(adminData));
-                return adminData;
-            }
-
-            // Fallback to DB check for other admins (optional, but keeping for robustness)
+            // Security Hardening: Validating against DB via Secure RPC.
             const { data, error } = await supabase
-                .from('users')
-                .select('*')
-                .ilike('name', name)
-                .eq('pin', pin)
-                .eq('role', 'admin')
+                .rpc('verify_user_credentials', {
+                    p_name: name,
+                    p_pin: pin,
+                    p_role: 'admin'
+                })
                 .maybeSingle();
 
             if (error) throw new Error(`Database error: ${error.message}`);
